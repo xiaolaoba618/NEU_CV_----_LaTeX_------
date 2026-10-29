@@ -1,0 +1,337 @@
+\documentclass[11pt,a4paper]{ctexart}
+
+% ==================================================
+% 1. 宏包引入
+% ==================================================
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{calc}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{fontspec}
+\usepackage{fontawesome5}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{fancybox}
+\usepackage{geometry}
+\usepackage{tabularx} % <--- 新增：引入 tabularx 宏包
+
+% 引入 TikZ 计算库
+\usetikzlibrary{calc}
+
+\hypersetup{hidelinks}
+
+% ==================================================
+% 2. 全局设置与格式
+% ==================================================
+\setlength{\parindent}{0pt}					% 取消全局段落缩进
+\pagenumbering{gobble}						% 取消页码显示
+\setlist[itemize]{nosep                     % 取消 itemize 的默认间距
+    , before={\vspace*{-\parskip}}          % 取消 itemize 和后续段落之间的空白
+    , leftmargin=*}		                    % 取消 itemize 的左边距
+\setlist[enumerate]{leftmargin=*}	        % 取消 enumerate 的左边距
+\renewcommand{\arraystretch}{1.2}           % 设置表格行间距
+\linespread{1.25}                           % 设置正文行间距
+
+% 标题格式设置（下方带横线）
+\titleformat{\section}
+  {\LARGE\bfseries\raggedright} 		      
+  {}{0em}                      			  
+  {}                           			  
+  [{\color{secondary_color}\titlerule}]     
+\titlespacing*{\section}{0cm}{*1.2}{*1.2}	
+
+% 页面边距设置（完全参照东南大学排版）
+\geometry{
+	a4paper,
+	left=1.2cm,
+	right=1.2cm,
+	top=1.5cm,
+	bottom=1cm,
+	nohead
+}
+
+% 字体设置（如果报错找不到字体，可以注释掉这段使用默认字体）
+\setmainfont[
+    Path=fonts/,
+    Extension=.otf,
+    BoldFont=*-Bold,
+]{NotoSerifSC}
+
+% ==================================================
+% 3. 颜色定制（东北大学深蓝色）
+% ==================================================
+\definecolor{neublue}{HTML}{1E3C96}    
+\definecolor{primary_color}{HTML}{1E3C96}    % 主色调：深蓝
+\definecolor{secondary_color}{HTML}{1E3C96}  % 副色调（标题下划线）：深蓝
+
+\newlength{\iconwidth}
+\setlength{\iconwidth}{1.5em}                   % 设置 section 标题部分图标占用的宽度
+
+% ==================================================
+% 4. 图片命名与路径（名称不可变）
+% ==================================================
+\graphicspath{{images/}}
+\newcommand{\HeaderLogoFile}{neu-header.png}
+\newcommand{\WatermarkLogoFile}{neu-watermark.png}
+\newcommand{\PhotoFile}{photo.jpg}
+
+% ==================================================
+% 5. 页眉、页脚与背景（通过 Hook 实现深蓝背景与精准定位）
+% ==================================================
+\AddToHook{shipout/background}{%
+\begin{tikzpicture}[remember picture, overlay]
+  \coordinate (NW) at (current page.north west);
+  \coordinate (NE) at (current page.north east);
+  \coordinate (SW) at (current page.south west);
+  \coordinate (SE) at (current page.south east);
+
+  % 顶部深蓝色背景 (高度1.75cm)
+  \fill[neublue] (NW) rectangle ([yshift=-1.75cm]NE);
+
+  % 底部深蓝色背景 (高度0.65cm)
+  \fill[neublue] (SW) rectangle ([yshift=0.65cm]SE);
+
+  % 背景水印（完美居中，透明度10%）
+  \node[anchor=center, inner sep=0pt, opacity=0.10] at (current page.center) {%
+    \includegraphics[width=18cm, height=18cm, keepaspectratio]{\WatermarkLogoFile}%
+  };
+\end{tikzpicture}%
+}
+
+\AddToHook{shipout/foreground}{%
+\begin{tikzpicture}[remember picture, overlay]
+  \coordinate (NW) at (current page.north west);
+  \coordinate (NE) at (current page.north east);
+  \coordinate (S)  at (current page.south);
+
+  % 左侧：东北大学校徽与校名
+  \node[anchor=west, inner sep=0pt] at ([xshift=1.55cm, yshift=-0.88cm]NW) {%
+    \includegraphics[width=5.25cm, height=1.30cm, keepaspectratio]{\HeaderLogoFile}%
+  };
+
+  % 右侧：学院名称
+  \node[anchor=east, text=white, font=\bfseries\small] at ([xshift=-1.55cm, yshift=-0.76cm]NE) {悉尼智能科技学院};
+  \node[anchor=east, text=white, font=\footnotesize] at ([xshift=-1.55cm, yshift=-1.17cm]NE) {Sydney Smart Technology College / SSTC};
+
+  % 底部：联系方式
+  \node[text=white, font=\footnotesize] at ([yshift=0.32cm]S) {%
+    \faPhone\ 130-6666-0000
+    \qquad
+    \faEnvelope\
+    \href{mailto:youremail@neu.edu.cn}{youremail@neu.edu.cn}
+    \qquad
+    \faGithub\
+    \href{https://github.com/你的GitHub}{GitHub 项目地址}
+  };
+\end{tikzpicture}%
+}
+
+% ==================================================
+% 6. 文档正文
+% ==================================================
+\begin{document}
+
+    % -------------------- 个人信息与照片 --------------------
+    \begin{minipage}[t]{0.78\textwidth}
+        \begin{minipage}[t]{\textwidth}
+        \section[个人信息]{\makebox[\iconwidth][c]{\color{primary_color}{\faAddressCard}}\quad 个人信息}
+        
+        \begin{minipage}[t]{0.5\textwidth}
+            \textbf{姓\qquad 名}：你的名字
+            
+            \vspace{0.5em}
+            \textbf{出生年月}：你的出生日期
+        \end{minipage}
+        \begin{minipage}[t]{0.35\textwidth}
+            \textbf{性\qquad 别}：沃尔玛购物袋
+            
+            \vspace{0.5em}
+            \textbf{政治面貌}：你的政治面貌
+        \end{minipage}
+        \vspace{1.2em}
+        \end{minipage}
+
+        % -------------------- 教育背景 --------------------
+        \begin{minipage}[t]{\textwidth}
+        \section[教育背景]{\makebox[\iconwidth][c]{\color{primary_color}{\faGraduationCap}}\quad 教育背景}
+        
+        {\large \textbf{东北大学}}，专科 \hfill 2000年9月--2010年6月
+        \begin{itemize}
+            \item 你的学院，你的专业
+            \item \textbf{主修课程}：课程1、课程2、课程3、课程4\ 等。
+        \end{itemize}
+        
+        \vspace{0.5em}
+        {\large \textbf{东北大学}}，本科 \hfill 2010年9月--2020年6月
+        \begin{itemize}
+            \item 你的学院，你的专业
+            \item \textbf{主修课程}：课程1、课程2、课程3、课程4\ 等。
+            \item \textbf{GPA}：4.8 / 4.8（排名：1 / 250）
+        \end{itemize}
+        
+        \vspace{0.5em}
+        {\large \textbf{东北大学}}，硕士 \hfill 2020年9月--至今
+        \begin{itemize}
+            \item 你的学院，你的专业，你的导师姓名\ 职称
+            \item \textbf{研究方向}：方向1、方向2、方向3、方向4\ 等。
+        \end{itemize}
+        
+        \vspace{1.2em}
+        \end{minipage}
+    \end{minipage}
+    \hfill
+    % 右半边照片（带占位符兜底机制）
+    \begin{minipage}[t]{0.2\textwidth}
+        \vspace{2em} 
+        \setlength{\fboxsep}{0pt}
+        \IfFileExists{images/\PhotoFile}{
+            \doublebox{\includegraphics[width=\linewidth]{\PhotoFile}}
+        }{
+            \doublebox{\begin{tikzpicture}
+                \draw[neublue!55, dashed] (0,0) rectangle (\linewidth, 3.5cm);
+                \node[align=center, text=gray, font=\small] at (0.5\linewidth, 1.75cm) {证件照\\photo.jpg};
+            \end{tikzpicture}}
+        }
+    \end{minipage}
+
+    % -------------------- 科研成果 --------------------
+    \begin{minipage}[t]{\textwidth}
+    \section[科研成果]{\makebox[\iconwidth][c]{\color{primary_color}{\faAtom}}\quad 科研成果}
+
+    This is One of Your Paper Published in Conference A.
+    \begin{itemize}
+        \item \textbf{Mingzi Nide}, Daoshi Nide. \hfill 发表于 \textbf{Conference A}（CCF-A类会议）
+        \item 用一句话描述这份论文干了什么\dots\dots
+    \end{itemize}
+
+    \vspace{0.5em}
+    《另一份论文的标题》
+    \begin{itemize}
+        \item  \textbf{你的名字}、你的师兄、你的导师 \hfill 发表于 \textbf{某篇期刊} （SCI-1区）
+        \item 用一句话描述这份论文干了什么\dots\dots
+    \end{itemize}
+    
+    \vspace{1.2em}
+    \end{minipage}
+
+    % -------------------- 项目与教学 --------------------
+    \begin{minipage}[t]{\textwidth}
+    \section[项目与教学]{\makebox[\iconwidth][c]{\color{primary_color}{\faChalkboardTeacher}}\quad 项目与教学}
+    
+    {\large \textbf{项目名称}} \hfill 2020年9月--2021年9月
+    \begin{itemize}
+        \item \textbf{你在项目中扮演的角色} \hfill 横向/纵向项目-已完结/进行中
+        \item 用一句话介绍你在这个项目中做了什么\dots\dots
+    \end{itemize}
+
+    \vspace{0.5em}
+    {\large \textbf{某某主题讨论班}}，主讲 / 参与 \hfill 2020年夏季
+    \begin{itemize}
+        \item \textbf{主要内容}：内容1，内容2，内容3\ 等。
+    \end{itemize}
+
+    \vspace{0.5em}
+    {\large \textbf{课程名称}}，助教 \hfill 2021年夏季
+    \begin{itemize}
+        \item \textbf{主要内容}：内容1，内容2，内容3\ 等。
+    \end{itemize}
+    
+    \vspace{1.2em}
+    \end{minipage}
+    
+    % -------------------- 技能特长 & 兴趣爱好 --------------------
+    \begin{minipage}[t]{0.6\textwidth}
+        \section[技能特长]{\makebox[\iconwidth][c]{\color{primary_color}{\faWrench}}\quad 技能特长}
+        \begin{itemize}
+        \setlength{\itemsep}{0.5em}
+            \item 熟练使用 Python、Jvav、Rust 等编程语言。
+            \item 熟练使用 Tensorflow、Pytorch 等深度学习框架。
+            \item 熟悉 Windows 与 Linux 端开发。
+        \end{itemize}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.35\textwidth}
+        \section[兴趣爱好]{\makebox[\iconwidth][c]{\color{primary_color}{\faStar}}\quad 兴趣爱好}
+        \begin{itemize}
+        \setlength{\itemsep}{0.5em}
+            \item 我喜欢唱
+            \item 跳
+            \item Rap
+            \item 篮球
+        \end{itemize}
+    \end{minipage}
+
+\newpage
+    % % 如有需要，可以添加额外的页面。不要忘记添加页眉页脚和背景相关的代码。
+
+    % % -------------------- 竞赛经历 --------------------
+    % \begin{minipage}[t]{\textwidth}
+    % \section[竞赛经历]{\makebox[\iconwidth][c]{\color{primary_color}{\faTrophy}}\quad 竞赛经历}
+    % \vspace{0.5em}
+    
+    % % 使用 tabularx 环境，X 列会自动拉伸并填满剩余宽度
+    % \begin{tabularx}{\textwidth}{X c c c}
+    %     \textbf{比赛1} & 第一负责人 & 国家级-第10名 & 2023年4月 \\
+    %     \textbf{比赛2} & 个人参赛 & 国家级-一等奖 & 2023年8月 \\
+    %     \textbf{比赛3} & 个人参赛 & 省级-一等奖 & 2022年12月 \\
+    % \end{tabularx}
+    
+    % \vspace{1.2em}
+    % \end{minipage}
+
+    % % -------------------- 技能特长 --------------------
+    % \begin{minipage}[t]{\textwidth}
+    % \section[技能特长]{\makebox[\iconwidth][c]{\color{primary_color}{\faWrench}}\quad 技能特长}
+    % \begin{itemize}
+    %     \item 熟练使用 C++、Python、Matlab 编程语言。
+    %     \item 熟悉 Windows 与 Linux 端开发。
+    %     \item 熟练使用 Tensorflow，Pytorch 等深度学习框架。
+    %     \item 熟练掌握 C++ 与 Python 环境下 OpenCV 与 Qt 应用的开发，且熟练使用 Qt Creator 软件。
+    %     \item 熟练使用 Altium Designer 与 LCEDA 进行封装绘制与板子设计。
+    %     \item 熟练使用 Keil，Arduino IDE 等集成开发软件。
+    %     \item 了解模式识别，强化学习，遗传算法，知识蒸馏等相关概念。
+    % \end{itemize}
+    % \vspace{1.2em}
+    % \end{minipage}
+
+    % % -------------------- 所获荣誉 --------------------
+    % \begin{minipage}[t]{\textwidth}
+    % \section[所获荣誉]{\makebox[\iconwidth][c]{\color{primary_color}{\faStar}}\quad 所获荣誉}
+    % \vspace{0.5em}
+    
+    % % 使用两个并排的 minipage 代替 multicols 环境
+    % \begin{minipage}[t]{0.48\textwidth}
+    %     \begin{itemize}
+    %         \item 某年学业先进个人
+    %         \item 某年某奖学金某等奖
+    %         \item 某大使
+    %     \end{itemize}
+    % \end{minipage}
+    % \hfill
+    % \begin{minipage}[t]{0.48\textwidth}
+    %     \begin{itemize}
+    %         \item 某年某奖学金某等奖
+    %         \item 某年优秀团员称号
+    %         \item 某年某称号
+    %     \end{itemize}
+    % \end{minipage}
+    
+    % \vspace{1.2em}
+    % \end{minipage}
+
+    % % -------------------- 其他 --------------------
+    % \begin{minipage}[t]{\textwidth}
+    % \section[其他]{\makebox[\iconwidth][c]{\color{primary_color}{\faInfo}}\quad 其他}
+    % \begin{itemize}
+    %     \item 英语水平-CET6级xxx分
+    %     \item 计算机几级证书
+    %     \item xx几级证书
+    %     \item 技术博客: 某网址
+    %     \item 教师资格证：xxx
+    %     \item 普通话证书：几级几等
+    %     \item 文字排版：\LaTeX
+    % \end{itemize}
+    % \end{minipage}
+
+\end{document}
