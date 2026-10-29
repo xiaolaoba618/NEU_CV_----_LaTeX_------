@@ -4,7 +4,7 @@
 
 ## 简介
 
-基于 [东南大学 LaTeX 中文简历模板](https://www.overleaf.com/project/6ae2d601537127bac731e5ea) 修改而来的东北大学中文 CV 模板。
+基于 [东南大学 LaTeX 中文简历模板](https://www.overleaf.com/latex/templates/seu-cv-dong-nan-da-xue-latex-zhong-wen-jian-li-mo-ban/jyzpthvnbmpm) 修改而来的东北大学中文 CV 模板。
 
 
 ## 使用方法
